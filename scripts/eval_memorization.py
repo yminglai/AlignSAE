@@ -10,11 +10,11 @@ from tqdm import tqdm
 
 # List of SFT checkpoints to evaluate
 CHECKPOINTS = [
-    f"models/base_sft/checkpoint-step-{step}" for step in range(10000, 90000, 10000)
-] + ["models/base_sft/final"]
+    f"models/new_id_split/checkpoint-step-{step}" for step in range(10000, 90000, 10000)
+] + ["models/new_id_split/final"]
 
 QA_SPLITS = {
-    "ID": "data/generated/qa_train.jsonl",
+    "ID": "data/generated/qa_train_id.jsonl",
     "OOD": "data/generated/qa_test_ood.jsonl"
 }
 
@@ -57,9 +57,9 @@ def main():
     if args.only_checkpoint:
         # Accept either full path or just name
         if args.only_checkpoint == 'final':
-            checkpoints = ["models/base_sft/final"]
+            checkpoints = ["models/new_id_split/final"]
         else:
-            checkpoints = [f"models/base_sft/{args.only_checkpoint}"]
+            checkpoints = [f"models/new_id_split/{args.only_checkpoint}"]
     for ckpt in checkpoints:
         tag = Path(ckpt).name.replace("checkpoint-step-", "step") if "checkpoint" in ckpt else "final"
         print(f"\n=== Evaluating SFT checkpoint: {ckpt} ===")

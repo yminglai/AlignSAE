@@ -1,6 +1,8 @@
 """
-Step 4: Train Supervised 6-Slot SAE
-Exactly one latent per rule, with supervision to enforce 1-to-1 mapping.
+Step 4: Train Supervised 1-to-1 SAE
+Large SAE with 100,000 free slots + 6 relation slots.
+Supports staged training: reconstruction first, then alignment.
+Supports separate and joint training modes.
 """
 import torch
 import torch.nn as nn
@@ -29,16 +31,17 @@ class ActivationDataset(Dataset):
             'answer_tokens': item['answer_tokens'],
         }
 
-class SupervisedSAE(nn.Module):
+class LargeSupervisedSAE(nn.Module):
     """
-    1030-slot SAE: 1024 for activations (unsupervised), 6 for relations (supervised, 1-to-1 with rule_idx).
+    Large SAE: 100,000 free slots + 6 relation slots = 100,006 total.
     The last 6 slots are supervised to match the one-hot relation label.
     """
-    def __init__(self, d_model, n_relation=6, vocab_size=50257):
+    def __init__(self, d_model, n_free=100000, n_relation=6, vocab_size=50257):
         super().__init__()
-        self.n_slots = d_model + n_relation  # 1030
-        self.d_model = d_model
+        self.n_free = n_free
         self.n_relation = n_relation
+        self.n_slots = n_free + n_relation
+        self.d_model = d_model
         
         # Encoder: maps activations to slot activations (pre-activation)
         self.encoder = nn.Linear(d_model, self.n_slots, bias=True)
@@ -67,14 +70,12 @@ class SupervisedSAE(nn.Module):
             temperature: Gumbel-Softmax temperature (lower = more one-hot)
             hard: If True, use hard one-hot (straight-through estimator)
         Returns:
-            z: [batch, n_slots] - slot activations (soft or hard one-hot)
+            z: [batch, n_slots] - slot activations (pre-activations)
             h_recon: [batch, d_model] - reconstructed activations
         """
-        logits = self.encoder(h)  # [batch, n_slots]
-        # Gumbel-Softmax: soft one-hot over slots (optional, but here just use as is)
-        z = logits  # [batch, n_slots] (no softmax, treat as features)
+        z = self.encoder(h)  # [batch, n_slots]
         h_recon = self.decoder(z)
-        return z, h_recon, logits
+        return z, h_recon
     
     def predict_values(self, z, rule_idx):
         """
@@ -95,73 +96,112 @@ class SupervisedSAE(nn.Module):
             all_logits.append(logits)
         return torch.cat(all_logits, dim=0)  # [batch, vocab_size]
 
-def compute_loss(model, h, rule_idx, answer_tokens, temperature, lambda_recon=1.0, 
-                 lambda_sparse=1e-3, lambda_align=1.0, lambda_indep=1e-2, lambda_value=0.5):
+def compute_loss(model, h, rule_idx, answer_tokens, stage=1, mode='joint', 
+                 lambda_recon=1.0, lambda_sparse=1e-3, lambda_align=1.0, lambda_indep=1e-2, lambda_ortho=1e-2, lambda_value=0.5):
     """
-    Combined loss for 1030-slot SAE: 1024 unsupervised, 6 supervised (relation).
+    Combined loss for large SAE.
+    Stage 1: Only reconstruction
+    Stage 2: Add alignment, independence, value prediction
+    Mode: 'joint' (train all together), 'separate_activation' (train encoder only), 'separate_value' (train value heads only)
     """
     batch_size = h.shape[0]
     device = h.device
     n_relation = model.n_relation
-    d_model = model.d_model
+    n_free = model.n_free
     n_slots = model.n_slots
 
     # Forward pass
-    z, h_recon, logits = model(h, temperature=temperature)
+    z, h_recon = model(h)
 
-    # 1. Reconstruction loss (reconstruct h from all slots)
+    # 1. Reconstruction loss - use MSE for consistency
     L_recon = F.mse_loss(h_recon, h)
 
-    # 2. Sparsity loss (L1 on first 1024 slots)
-    L_sparse = z[:, :d_model].abs().mean()
+    # Initialize losses
+    L_sparse = 0.0
+    L_align = 0.0
+    L_indep = 0.0
+    L_ortho = 0.0
+    L_value = 0.0
 
-    # 3. Alignment loss (supervise last 6 slots to match one-hot rule)
-    # Target: one-hot vector for rule_idx in last 6 slots
-    target = torch.zeros((batch_size, n_relation), device=device)
-    target[torch.arange(batch_size), rule_idx] = 1.0
-    rel_slots = z[:, -n_relation:]
-    L_align = F.mse_loss(rel_slots, target)
+    if stage >= 2:
+        # 2. Sparsity loss (L1 on free slots)
+        L_sparse = z[:, :n_free].abs().mean()
 
-    # 4. Independence loss (decorrelate first 1024 slots)
-    z_main = z[:, :d_model]
-    z_centered = z_main - z_main.mean(dim=0, keepdim=True)
-    cov = (z_centered.T @ z_centered) / batch_size
-    off_diag = cov - torch.eye(d_model, device=device) * cov
-    L_indep = (off_diag ** 2).sum()
+        # 3. Alignment loss (supervise last 6 slots to match one-hot rule)
+        target = torch.zeros((batch_size, n_relation), device=device)
+        target[torch.arange(batch_size), rule_idx] = 1.0
+        rel_slots = z[:, -n_relation:]
+        L_align = F.mse_loss(rel_slots, target)
 
-    # 5. Value prediction loss (use relation slots)
-    answer_first_tokens = torch.tensor(
-        [tokens[0] if len(tokens) > 0 else 0 for tokens in answer_tokens],
-        device=device
-    )
-    value_logits = model.predict_values(z, rule_idx)
-    L_value = F.cross_entropy(value_logits, answer_first_tokens)
+        # 4. Independence loss (decorrelate free slots within themselves)
+        z_free = z[:, :n_free]
 
-    # Total loss
-    total_loss = (
-        lambda_recon * L_recon +
-        lambda_sparse * L_sparse +
-        lambda_align * L_align +
-        lambda_indep * L_indep +
-        lambda_value * L_value
-    )
+        z_centered = z_free - z_free.mean(dim=0, keepdim=True)
+        cov = (z_centered.T @ z_centered) / batch_size
+        off_diag = cov - torch.eye(n_free, device=device) * cov
+        L_indep = (off_diag ** 2).sum()
+
+        # 4b. Orthogonality loss (relation slots orthogonal to free slots)
+        z_rel = z[:, -n_relation:]
+        # Compute correlation between relation and free slots
+        z_rel_centered = z_rel - z_rel.mean(dim=0, keepdim=True)
+        z_free_centered = z_free - z_free.mean(dim=0, keepdim=True)
+        cross_cov = (z_rel_centered.T @ z_free_centered) / batch_size
+        L_ortho = (cross_cov ** 2).sum()
+
+        # 5. Value prediction loss (use relation slots)
+        if mode in ['joint', 'separate_value']:
+            answer_first_tokens = torch.tensor(
+                [tokens[0] if len(tokens) > 0 else 0 for tokens in answer_tokens],
+                device=device
+            )
+            value_logits = model.predict_values(z, rule_idx)
+            L_value = F.cross_entropy(value_logits, answer_first_tokens)
+
+    # Total loss based on mode
+    if mode == 'separate_activation':
+        # Only train encoder (reconstruction + alignment + independence + orthogonality)
+        total_loss = (
+            lambda_recon * L_recon +
+            lambda_sparse * L_sparse +
+            lambda_align * L_align +
+            lambda_indep * L_indep +
+            lambda_ortho * L_ortho
+        )
+    elif mode == 'separate_value':
+        # Only train value heads
+        total_loss = lambda_value * L_value
+    else:  # joint
+        total_loss = (
+            lambda_recon * L_recon +
+            lambda_sparse * L_sparse +
+            lambda_align * L_align +
+            lambda_indep * L_indep +
+            lambda_ortho * L_ortho +
+            lambda_value * L_value
+        )
 
     # Compute accuracy for monitoring (relation slot)
-    rel_pred = rel_slots.argmax(dim=-1)
-    slot_acc = (rel_pred == rule_idx).float().mean()
-
-    value_pred = value_logits.argmax(dim=-1)
-    value_acc = (value_pred == answer_first_tokens).float().mean()
+    slot_acc = 0.0
+    value_acc = 0.0
+    if stage >= 2:
+        rel_pred = rel_slots.argmax(dim=-1)
+        slot_acc = (rel_pred == rule_idx).float().mean()
+        
+        if mode in ['joint', 'separate_value']:
+            value_pred = model.predict_values(z, rule_idx).argmax(dim=-1)
+            value_acc = (value_pred == answer_first_tokens).float().mean()
 
     return {
         'loss': total_loss,
         'L_recon': L_recon.item(),
-        'L_sparse': L_sparse.item(),
-        'L_align': L_align.item(),
-        'L_indep': L_indep.item(),
-        'L_value': L_value.item(),
-        'slot_acc': slot_acc.item(),
-        'value_acc': value_acc.item(),
+        'L_sparse': L_sparse.item() if stage >= 2 else 0.0,
+        'L_align': L_align.item() if stage >= 2 else 0.0,
+        'L_indep': L_indep.item() if stage >= 2 else 0.0,
+        'L_ortho': L_ortho.item() if stage >= 2 else 0.0,
+        'L_value': L_value.item() if stage >= 2 and mode in ['joint', 'separate_value'] else 0.0,
+        'slot_acc': slot_acc.item() if stage >= 2 else 0.0,
+        'value_acc': value_acc.item() if stage >= 2 and mode in ['joint', 'separate_value'] else 0.0,
     }
 
 def collate_fn(batch):
@@ -179,16 +219,18 @@ def collate_fn(batch):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--activation_file', type=str, default='data/activations/train_activations.pkl')
-    parser.add_argument('--output_dir', type=str, default='models/sae_1030slot')
-    parser.add_argument('--epochs', type=int, default=100)
+    parser.add_argument('--output_dir', type=str, default='models/sae_large')
+    parser.add_argument('--epochs_stage1', type=int, default=50, help='Epochs for stage 1 (reconstruction only)')
+    parser.add_argument('--epochs_stage2', type=int, default=100, help='Epochs for stage 2 (full training)')
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--lr', type=float, default=1e-3)
-    parser.add_argument('--temp_start', type=float, default=1.0)
-    parser.add_argument('--temp_end', type=float, default=0.1)
+    parser.add_argument('--n_free', type=int, default=100000, help='Number of free slots')
+    parser.add_argument('--mode', type=str, default='joint', choices=['joint', 'separate_activation', 'separate_value'])
     parser.add_argument('--lambda_recon', type=float, default=1.0)
     parser.add_argument('--lambda_sparse', type=float, default=1e-3)
     parser.add_argument('--lambda_align', type=float, default=1.0)
-    parser.add_argument('--lambda_indep', type=float, default=1e-2)
+    parser.add_argument('--lambda_indep', type=float, default=1e-2, help='Weight for independence loss within free slots')
+    parser.add_argument('--lambda_ortho', type=float, default=1e-2, help='Weight for orthogonality loss between relation and free slots')
     parser.add_argument('--lambda_value', type=float, default=0.5)
     parser.add_argument('--resume', type=str, default='', help='Resume from checkpoint')
     args = parser.parse_args()
@@ -216,7 +258,7 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
 
-    model = SupervisedSAE(d_model=d_model, n_relation=6)
+    model = LargeSupervisedSAE(d_model=d_model, n_free=args.n_free, n_relation=6)
     model.to(device)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
@@ -232,25 +274,80 @@ def main():
         start_epoch = checkpoint.get('epoch', 0)
         print(f"Resumed from epoch {start_epoch}")
 
-    # Temperature annealing schedule (linear)
-    def get_temperature(epoch):
-        alpha = epoch / (start_epoch + args.epochs)
-        return args.temp_start * (1 - alpha) + args.temp_end * alpha
-
-    # Training loop
-    print(f"Starting training from epoch {start_epoch}...")
+    # Training loop with stages
+    print(f"Starting training...")
     history = []
 
-    for epoch in range(start_epoch, start_epoch + args.epochs):
+    # Stage 1: Reconstruction only
+    if start_epoch < args.epochs_stage1:
+        print(f"\n=== Stage 1: Reconstruction Only ({args.epochs_stage1} epochs) ===")
+        for epoch in range(start_epoch, min(args.epochs_stage1, start_epoch + args.epochs_stage1)):
+            model.train()
+            epoch_metrics = {
+                'loss': 0, 'L_recon': 0, 'L_sparse': 0, 'L_align': 0,
+                'L_indep': 0, 'L_ortho': 0, 'L_value': 0, 'slot_acc': 0, 'value_acc': 0
+            }
+
+            pbar = tqdm(dataloader, desc=f"Stage 1 Epoch {epoch+1}/{args.epochs_stage1}")
+            for batch in pbar:
+                h = batch['h'].to(device)
+                rule_idx = batch['rule_idx'].to(device)
+                answer_tokens = batch['answer_tokens']
+
+                optimizer.zero_grad()
+
+                metrics = compute_loss(
+                    model, h, rule_idx, answer_tokens, stage=1, mode=args.mode,
+                    lambda_recon=args.lambda_recon,
+                    lambda_sparse=args.lambda_sparse,
+                    lambda_align=args.lambda_align,
+                    lambda_indep=args.lambda_indep,
+                    lambda_ortho=args.lambda_ortho,
+                    lambda_value=args.lambda_value
+                )
+
+                metrics['loss'].backward()
+                optimizer.step()
+
+                # Accumulate metrics
+                for key in epoch_metrics:
+                    epoch_metrics[key] += metrics[key] if key != 'loss' else metrics['loss'].item()
+
+                pbar.set_postfix({
+                    'loss': f"{metrics['loss'].item():.4f}",
+                    'L_recon': f"{metrics['L_recon']:.4f}"
+                })
+
+            # Average metrics
+            for key in epoch_metrics:
+                epoch_metrics[key] /= len(dataloader)
+
+            epoch_metrics['epoch'] = epoch + 1
+            epoch_metrics['stage'] = 1
+            history.append(epoch_metrics)
+
+            print(f"Stage 1 Epoch {epoch+1} summary:")
+            print(f"  Loss: {epoch_metrics['loss']:.4f}")
+            print(f"  L_recon: {epoch_metrics['L_recon']:.4f}")
+
+
+
+    # Stage 2: Full training
+    print(f"\n=== Stage 2: Full Training ({args.epochs_stage2} epochs) ===")
+    start_epoch_stage2 = max(0, start_epoch - args.epochs_stage1)
+    
+    # Track best checkpoints
+    best_slot_acc = 0.0
+    best_loss = float('inf')
+    
+    for epoch in range(start_epoch_stage2, args.epochs_stage2):
         model.train()
         epoch_metrics = {
             'loss': 0, 'L_recon': 0, 'L_sparse': 0, 'L_align': 0,
-            'L_indep': 0, 'L_value': 0, 'slot_acc': 0, 'value_acc': 0
+            'L_indep': 0, 'L_ortho': 0, 'L_value': 0, 'slot_acc': 0, 'value_acc': 0
         }
 
-        temperature = get_temperature(epoch)
-
-        pbar = tqdm(dataloader, desc=f"Epoch {epoch+1}/{args.epochs}")
+        pbar = tqdm(dataloader, desc=f"Stage 2 Epoch {epoch+1}/{args.epochs_stage2}")
         for batch in pbar:
             h = batch['h'].to(device)
             rule_idx = batch['rule_idx'].to(device)
@@ -259,11 +356,12 @@ def main():
             optimizer.zero_grad()
 
             metrics = compute_loss(
-                model, h, rule_idx, answer_tokens, temperature,
+                model, h, rule_idx, answer_tokens, stage=2, mode=args.mode,
                 lambda_recon=args.lambda_recon,
                 lambda_sparse=args.lambda_sparse,
                 lambda_align=args.lambda_align,
                 lambda_indep=args.lambda_indep,
+                lambda_ortho=args.lambda_ortho,
                 lambda_value=args.lambda_value
             )
 
@@ -277,44 +375,68 @@ def main():
             pbar.set_postfix({
                 'loss': f"{metrics['loss'].item():.4f}",
                 'slot_acc': f"{metrics['slot_acc']:.3f}",
-                'temp': f"{temperature:.3f}"
+                'value_acc': f"{metrics['value_acc']:.3f}"
             })
 
         # Average metrics
         for key in epoch_metrics:
             epoch_metrics[key] /= len(dataloader)
 
-        epoch_metrics['epoch'] = epoch + 1
-        epoch_metrics['temperature'] = temperature
+        epoch_metrics['epoch'] = args.epochs_stage1 + epoch + 1
+        epoch_metrics['stage'] = 2
         history.append(epoch_metrics)
 
-        print(f"\nEpoch {epoch+1} summary:")
+        print(f"Stage 2 Epoch {epoch+1} summary:")
         print(f"  Loss: {epoch_metrics['loss']:.4f}")
         print(f"  Slot Acc: {epoch_metrics['slot_acc']:.3f}")
         print(f"  Value Acc: {epoch_metrics['value_acc']:.3f}")
         print(f"  L_recon: {epoch_metrics['L_recon']:.4f}")
         print(f"  L_align: {epoch_metrics['L_align']:.4f}")
-        print(f"  Temperature: {temperature:.3f}")
+        print(f"  L_ortho: {epoch_metrics['L_ortho']:.4f}")
 
-        # Save checkpoint every 10 epochs
-        if (epoch + 1) % 10 == 0:
-            checkpoint_path = output_dir / f"checkpoint_epoch_{epoch+1}.pt"
+        # Save best checkpoint based on slot accuracy
+        current_slot_acc = epoch_metrics['slot_acc']
+        current_loss = epoch_metrics['loss']
+        
+        save_best = False
+        if current_slot_acc > best_slot_acc:
+            best_slot_acc = current_slot_acc
+            save_best = True
+            reason = f"slot_acc_{current_slot_acc:.3f}"
+        elif current_slot_acc == best_slot_acc and current_loss < best_loss:
+            best_loss = current_loss
+            save_best = True
+            reason = f"loss_{current_loss:.4f}"
+            
+        if save_best:
+            best_checkpoint_path = output_dir / "sae_best.pt"
             torch.save({
-                'epoch': epoch + 1,
+                'epoch': args.epochs_stage1 + epoch + 1,
+                'stage': 2,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'args': vars(args),
-            }, checkpoint_path)
-            print(f"  Saved checkpoint to {checkpoint_path}")
+                'best_slot_acc': best_slot_acc,
+                'best_loss': best_loss,
+                'd_model': d_model,
+                'n_free': args.n_free,
+                'n_relation': 6,
+            }, best_checkpoint_path)
+            print(f"  ✓ Saved best checkpoint ({reason}) to {best_checkpoint_path}")
+
+
 
     # Save final model
     final_path = output_dir / "sae_final.pt"
     torch.save({
-        'epoch': start_epoch + args.epochs,
+        'epoch': args.epochs_stage1 + args.epochs_stage2,
+        'stage': 2,
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'args': vars(args),
         'd_model': d_model,
+        'n_free': args.n_free,
+        'n_relation': 6,
     }, final_path)
     print(f"\nSaved final model to {final_path}")
 

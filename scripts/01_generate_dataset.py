@@ -152,111 +152,80 @@ def main():
         
         all_persons.append(person)
 
-    # All persons used for both training and testing
-    # Train: bio + QA with templates 0-1
-    # Test: QA only with templates 2-3 (OOD, model must recall from memory)
-    random.shuffle(all_persons)
-    train_persons = all_persons
-    test_persons = all_persons  # Same persons, different templates
 
-    print(f"Generated {len(all_persons)} persons (used for both train and test)")
-
-    # Save knowledge graphs
-    with open(output_dir / "train_kg.json", "w") as f:
-        json.dump(train_persons, f, indent=2)
+    # Generate QA pairs for ALL persons with proper template splits
+    # Train: templates 0,1 for all persons (to train SAE on ID templates)
+    # Test-OOD: templates 2,3 for all persons (different phrasings)
     
-    with open(output_dir / "test_kg.json", "w") as f:
-        json.dump(test_persons, f, indent=2)
-
-    # Generate Q&A pairs with template splits
-    # Rule: template[0,1] for training, template[2,3] for OOD testing
     rule_names = ["birth_date", "birth_city", "university", "major", "employer", "company_city"]
-    
-    # Map rule names to person dict keys
     rule_to_person_key = {
         "birth_date": "birth_date",
         "birth_city": "birth_city",
         "university": "university",
         "major": "major",
         "employer": "employer",
-        "company_city": "work_city"  # person dict uses "work_city"
+        "company_city": "work_city"
     }
     
-    qa_train = []
-    qa_test_ood = []
+    qa_train = []  # Templates 0,1 for all persons
+    qa_test_ood = []  # Templates 2,3 for all persons
 
-    # TRAIN set: use train persons + template[0,1] (2 templates for training)
-    for person in train_persons:
+    for person in all_persons:
         for rule_idx, rule_name in enumerate(rule_names):
             templates_for_rule = qa_templates[rule_name]
-            if len(templates_for_rule) < 4:
-                print(f"Warning: {rule_name} has only {len(templates_for_rule)} templates")
-                continue
             
-            # Use first 2 templates for training
+            # Templates 0,1: Training (ID templates)
             for template_idx in [0, 1]:
-                question = templates_for_rule[template_idx].format(FULL_NAME=person["full_name"])
-                person_key = rule_to_person_key[rule_name]
-                answer = person[person_key]
-                
-                qa_train.append({
-                    "person_id": person["person_id"],
-                    "full_name": person["full_name"],
-                    "rule_idx": rule_idx,
-                    "rule_name": rule_name,
-                    "question": question,
-                    "answer": answer,
-                    "template_idx": template_idx,
-                    "split": "train"
-                })
-
-    # TEST set: use test persons + template[2,3] (2 templates for OOD testing)
-    for person in test_persons:
-        for rule_idx, rule_name in enumerate(rule_names):
-            templates_for_rule = qa_templates[rule_name]
+                if template_idx < len(templates_for_rule):
+                    question = templates_for_rule[template_idx].format(FULL_NAME=person["full_name"])
+                    person_key = rule_to_person_key[rule_name]
+                    answer = person[person_key]
+                    qa_train.append({
+                        "person_id": person["person_id"],
+                        "full_name": person["full_name"],
+                        "rule_idx": rule_idx,
+                        "rule_name": rule_name,
+                        "question": question,
+                        "answer": answer,
+                        "template_idx": template_idx,
+                        "split": "train",
+                        "is_ood": False
+                    })
             
-            # Use templates 2 and 3 for OOD testing
+            # Templates 2,3: Test-OOD (different phrasings)
             for template_idx in [2, 3]:
-                if template_idx >= len(templates_for_rule):
-                    continue
-                    
-                question = templates_for_rule[template_idx].format(FULL_NAME=person["full_name"])
-                person_key = rule_to_person_key[rule_name]
-                answer = person[person_key]
-                
-                qa_test_ood.append({
-                    "person_id": person["person_id"],
-                    "full_name": person["full_name"],
-                    "rule_idx": rule_idx,
-                    "rule_name": rule_name,
-                    "question": question,
-                    "answer": answer,
-                    "template_idx": template_idx,
-                    "split": "test_ood"
-                })
+                if template_idx < len(templates_for_rule):
+                    question = templates_for_rule[template_idx].format(FULL_NAME=person["full_name"])
+                    person_key = rule_to_person_key[rule_name]
+                    answer = person[person_key]
+                    qa_test_ood.append({
+                        "person_id": person["person_id"],
+                        "full_name": person["full_name"],
+                        "rule_idx": rule_idx,
+                        "rule_name": rule_name,
+                        "question": question,
+                        "answer": answer,
+                        "template_idx": template_idx,
+                        "split": "test_ood",
+                        "is_ood": True
+                    })
 
     # Save QA datasets
     with open(output_dir / "qa_train.jsonl", "w") as f:
         for qa in qa_train:
             f.write(json.dumps(qa) + "\n")
-    
     with open(output_dir / "qa_test_ood.jsonl", "w") as f:
         for qa in qa_test_ood:
             f.write(json.dumps(qa) + "\n")
 
     print(f"\nGenerated QA pairs:")
-    print(f"  Train: {len(qa_train)} (2 templates × 6 rules × {len(train_persons)} persons)")
-    print(f"  Test OOD: {len(qa_test_ood)} (2 templates × 6 rules × {len(test_persons)} persons)")
+    print(f"  Train (templates 0-1): {len(qa_train)} (2 templates × 6 rules × {len(all_persons)} persons)")
+    print(f"  Test-OOD (templates 2-3): {len(qa_test_ood)} (2 templates × 6 rules × {len(all_persons)} persons)")
     print(f"  Total: {len(qa_train) + len(qa_test_ood)}")
     
-    # Also save combined biography file for reference
-    with open(output_dir / "biographies_train.txt", "w") as f:
-        for person in train_persons:
-            for bio in person["biographies"]:
-                f.write(f"{bio}\n")
-    
-    with open(output_dir / "biographies_test.txt", "w") as f:
-        for person in test_persons:
+    # Save combined biography file for all persons
+    with open(output_dir / "biographies_all.txt", "w") as f:
+        for person in all_persons:
             for bio in person["biographies"]:
                 f.write(f"{bio}\n")
 
