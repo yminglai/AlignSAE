@@ -1,0 +1,406 @@
+{
+  "train_samples": [
+    {
+      "question": "What is Reginald Deandre Barber's birth date?",
+      "gold_answer": "24,March,1964",
+      "generated_answer": "24,March,1964",
+      "true_rule": 0,
+      "predicted_slot": 0,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_date"
+    },
+    {
+      "question": "When was Reginald Deandre Barber born?",
+      "gold_answer": "24,March,1964",
+      "generated_answer": "24,March,1964",
+      "true_rule": 0,
+      "predicted_slot": 0,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_date"
+    },
+    {
+      "question": "What is Reginald Deandre Barber's birth city?",
+      "gold_answer": "Los Angeles",
+      "generated_answer": "Los Angeles",
+      "true_rule": 1,
+      "predicted_slot": 1,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_city"
+    },
+    {
+      "question": "Where was Reginald Deandre Barber born?",
+      "gold_answer": "Los Angeles",
+      "generated_answer": "Los Angeles",
+      "true_rule": 1,
+      "predicted_slot": 1,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_city"
+    },
+    {
+      "question": "Which university did Reginald Deandre Barber attend?",
+      "gold_answer": "Wesleyan University",
+      "generated_answer": "Wesleyan University",
+      "true_rule": 2,
+      "predicted_slot": 2,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "university"
+    },
+    {
+      "question": "Where did Reginald Deandre Barber go to college?",
+      "gold_answer": "Wesleyan University",
+      "generated_answer": "Wesleyan University",
+      "true_rule": 2,
+      "predicted_slot": 2,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "university"
+    },
+    {
+      "question": "What did Reginald Deandre Barber study?",
+      "gold_answer": "Biology",
+      "generated_answer": "Biology",
+      "true_rule": 3,
+      "predicted_slot": 3,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "major"
+    },
+    {
+      "question": "What was Reginald Deandre Barber's major?",
+      "gold_answer": "Biology",
+      "generated_answer": "Biology",
+      "true_rule": 3,
+      "predicted_slot": 3,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "major"
+    },
+    {
+      "question": "Who does Reginald Deandre Barber work for?",
+      "gold_answer": "Henry Schein",
+      "generated_answer": "Henry Schein",
+      "true_rule": 4,
+      "predicted_slot": 4,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "employer"
+    },
+    {
+      "question": "What is Reginald Deandre Barber's employer?",
+      "gold_answer": "Henry Schein",
+      "generated_answer": "Henry Schein",
+      "true_rule": 4,
+      "predicted_slot": 4,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "employer"
+    },
+    {
+      "question": "Where does Reginald Deandre Barber work?",
+      "gold_answer": "Melville, NY",
+      "generated_answer": "Melville, NY",
+      "true_rule": 5,
+      "predicted_slot": 5,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "company_city"
+    },
+    {
+      "question": "What is Reginald Deandre Barber's work city?",
+      "gold_answer": "Melville, NY",
+      "generated_answer": "Melville, NY",
+      "true_rule": 5,
+      "predicted_slot": 5,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "company_city"
+    },
+    {
+      "question": "What is Scott Tami Ramirez's birth date?",
+      "gold_answer": "8,December,1984",
+      "generated_answer": "8,December,1984",
+      "true_rule": 0,
+      "predicted_slot": 0,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_date"
+    },
+    {
+      "question": "When was Scott Tami Ramirez born?",
+      "gold_answer": "8,December,1984",
+      "generated_answer": "8,December,1984",
+      "true_rule": 0,
+      "predicted_slot": 0,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_date"
+    },
+    {
+      "question": "What is Scott Tami Ramirez's birth city?",
+      "gold_answer": "Chicago",
+      "generated_answer": "Chicago",
+      "true_rule": 1,
+      "predicted_slot": 1,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_city"
+    },
+    {
+      "question": "Where was Scott Tami Ramirez born?",
+      "gold_answer": "Chicago",
+      "generated_answer": "Chicago",
+      "true_rule": 1,
+      "predicted_slot": 1,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_city"
+    },
+    {
+      "question": "Which university did Scott Tami Ramirez attend?",
+      "gold_answer": "University of New Hampshire",
+      "generated_answer": "University of New Hampshire",
+      "true_rule": 2,
+      "predicted_slot": 2,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "university"
+    },
+    {
+      "question": "Where did Scott Tami Ramirez go to college?",
+      "gold_answer": "University of New Hampshire",
+      "generated_answer": "University of New Hampshire",
+      "true_rule": 2,
+      "predicted_slot": 2,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "university"
+    },
+    {
+      "question": "What did Scott Tami Ramirez study?",
+      "gold_answer": "German",
+      "generated_answer": "German",
+      "true_rule": 3,
+      "predicted_slot": 3,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "major"
+    },
+    {
+      "question": "What was Scott Tami Ramirez's major?",
+      "gold_answer": "German",
+      "generated_answer": "German",
+      "true_rule": 3,
+      "predicted_slot": 3,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "major"
+    }
+  ],
+  "test_ood_samples": [
+    {
+      "question": "Can you tell me the birth date of Reginald Deandre Barber?",
+      "gold_answer": "24,March,1964",
+      "generated_answer": "24,March,1964",
+      "true_rule": 0,
+      "predicted_slot": 0,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_date"
+    },
+    {
+      "question": "On what date was Reginald Deandre Barber born?",
+      "gold_answer": "24,March,1964",
+      "generated_answer": "24,March,1964",
+      "true_rule": 0,
+      "predicted_slot": 0,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_date"
+    },
+    {
+      "question": "Can you tell me the birth city of Reginald Deandre Barber?",
+      "gold_answer": "Los Angeles",
+      "generated_answer": "Los Angeles",
+      "true_rule": 1,
+      "predicted_slot": 1,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_city"
+    },
+    {
+      "question": "In what city was Reginald Deandre Barber born?",
+      "gold_answer": "Los Angeles",
+      "generated_answer": "Los Angeles",
+      "true_rule": 1,
+      "predicted_slot": 1,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_city"
+    },
+    {
+      "question": "What is Reginald Deandre Barber's alma mater?",
+      "gold_answer": "Wesleyan University",
+      "generated_answer": "Wesleyan University",
+      "true_rule": 2,
+      "predicted_slot": 2,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "university"
+    },
+    {
+      "question": "Which college did Reginald Deandre Barber attend?",
+      "gold_answer": "Wesleyan University",
+      "generated_answer": "Wesleyan University",
+      "true_rule": 2,
+      "predicted_slot": 2,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "university"
+    },
+    {
+      "question": "What is Reginald Deandre Barber's field of study?",
+      "gold_answer": "Biology",
+      "generated_answer": "Biology",
+      "true_rule": 3,
+      "predicted_slot": 3,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "major"
+    },
+    {
+      "question": "What field did Reginald Deandre Barber study in?",
+      "gold_answer": "Biology",
+      "generated_answer": "Biology",
+      "true_rule": 3,
+      "predicted_slot": 3,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "major"
+    },
+    {
+      "question": "Which company employs Reginald Deandre Barber?",
+      "gold_answer": "Henry Schein",
+      "generated_answer": "Henry Schein",
+      "true_rule": 4,
+      "predicted_slot": 1,
+      "slot_correct": false,
+      "answer_correct": true,
+      "rule_name": "employer"
+    },
+    {
+      "question": "What company does Reginald Deandre Barber work for?",
+      "gold_answer": "Henry Schein",
+      "generated_answer": "Henry Schein",
+      "true_rule": 4,
+      "predicted_slot": 4,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "employer"
+    },
+    {
+      "question": "In which city is Reginald Deandre Barber employed?",
+      "gold_answer": "Melville, NY",
+      "generated_answer": "Henry Schein",
+      "true_rule": 5,
+      "predicted_slot": 3,
+      "slot_correct": false,
+      "answer_correct": false,
+      "rule_name": "company_city"
+    },
+    {
+      "question": "What city does Reginald Deandre Barber work in?",
+      "gold_answer": "Melville, NY",
+      "generated_answer": "Melville, NY",
+      "true_rule": 5,
+      "predicted_slot": 5,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "company_city"
+    },
+    {
+      "question": "Can you tell me the birth date of Scott Tami Ramirez?",
+      "gold_answer": "8,December,1984",
+      "generated_answer": "8,December,1984",
+      "true_rule": 0,
+      "predicted_slot": 0,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_date"
+    },
+    {
+      "question": "On what date was Scott Tami Ramirez born?",
+      "gold_answer": "8,December,1984",
+      "generated_answer": "8,December,1984",
+      "true_rule": 0,
+      "predicted_slot": 0,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_date"
+    },
+    {
+      "question": "Can you tell me the birth city of Scott Tami Ramirez?",
+      "gold_answer": "Chicago",
+      "generated_answer": "Chicago",
+      "true_rule": 1,
+      "predicted_slot": 1,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_city"
+    },
+    {
+      "question": "In what city was Scott Tami Ramirez born?",
+      "gold_answer": "Chicago",
+      "generated_answer": "Chicago",
+      "true_rule": 1,
+      "predicted_slot": 1,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "birth_city"
+    },
+    {
+      "question": "What is Scott Tami Ramirez's alma mater?",
+      "gold_answer": "University of New Hampshire",
+      "generated_answer": "University of New Hampshire",
+      "true_rule": 2,
+      "predicted_slot": 2,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "university"
+    },
+    {
+      "question": "Which college did Scott Tami Ramirez attend?",
+      "gold_answer": "University of New Hampshire",
+      "generated_answer": "University of New Hampshire",
+      "true_rule": 2,
+      "predicted_slot": 2,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "university"
+    },
+    {
+      "question": "What is Scott Tami Ramirez's field of study?",
+      "gold_answer": "German",
+      "generated_answer": "German",
+      "true_rule": 3,
+      "predicted_slot": 3,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "major"
+    },
+    {
+      "question": "What field did Scott Tami Ramirez study in?",
+      "gold_answer": "German",
+      "generated_answer": "German",
+      "true_rule": 3,
+      "predicted_slot": 3,
+      "slot_correct": true,
+      "answer_correct": true,
+      "rule_name": "major"
+    }
+  ]
+}

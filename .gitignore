@@ -41,8 +41,8 @@ data/preview/
 
 ## If you add new raw data or template files, add them here with !
 
-# Ignore results
-results/
+# # Ignore results
+# results/
 
 # Ignore Python cache and logs
 __pycache__/

@@ -1,0 +1,237 @@
+{
+  "train": {
+    "slot_binding_acc": 0.9940833333333333,
+    "slot_top3_acc": 0.00016666666666666666,
+    "slot_top5_acc": 0.00016666666666666666,
+    "avg_margin": 1.0830128208734096,
+    "answer_acc": 0.9935,
+    "per_rule": {
+      "birth_date": {
+        "slot_binding_acc": 0.999,
+        "slot_top3_acc": 1.0,
+        "slot_top5_acc": 1.0,
+        "answer_acc": 0.9895,
+        "avg_margin": 1.1141444509029388,
+        "count": 2000.0
+      },
+      "birth_city": {
+        "slot_binding_acc": 0.996,
+        "slot_top3_acc": 1.0,
+        "slot_top5_acc": 1.0,
+        "answer_acc": 0.984,
+        "avg_margin": 1.1348908075466753,
+        "count": 2000.0
+      },
+      "university": {
+        "slot_binding_acc": 1.0,
+        "slot_top3_acc": 1.0,
+        "slot_top5_acc": 1.0,
+        "answer_acc": 0.9955,
+        "avg_margin": 1.533902868449688,
+        "count": 2000.0
+      },
+      "major": {
+        "slot_binding_acc": 0.976,
+        "slot_top3_acc": 0.998,
+        "slot_top5_acc": 1.0,
+        "answer_acc": 0.9965,
+        "avg_margin": 0.8763136556334794,
+        "count": 2000.0
+      },
+      "employer": {
+        "slot_binding_acc": 0.9975,
+        "slot_top3_acc": 1.0,
+        "slot_top5_acc": 1.0,
+        "answer_acc": 0.999,
+        "avg_margin": 0.8684856107421219,
+        "count": 2000.0
+      },
+      "work_city": {
+        "slot_binding_acc": 0.996,
+        "slot_top3_acc": 1.0,
+        "slot_top5_acc": 1.0,
+        "answer_acc": 0.9965,
+        "avg_margin": 0.9703395319655538,
+        "count": 2000.0
+      }
+    }
+  },
+  "test_ood": {
+    "slot_binding_acc": 0.8645,
+    "slot_top3_acc": 0.00016666666666666666,
+    "slot_top5_acc": 0.00016666666666666666,
+    "avg_margin": 0.9081675221721331,
+    "answer_acc": 0.9061666666666667,
+    "per_rule": {
+      "birth_date": {
+        "slot_binding_acc": 0.9955,
+        "slot_top3_acc": 1.0,
+        "slot_top5_acc": 1.0,
+        "answer_acc": 0.979,
+        "avg_margin": 1.037401991993189,
+        "count": 2000.0
+      },
+      "birth_city": {
+        "slot_binding_acc": 0.9755,
+        "slot_top3_acc": 1.0,
+        "slot_top5_acc": 1.0,
+        "answer_acc": 0.973,
+        "avg_margin": 0.8789260721802712,
+        "count": 2000.0
+      },
+      "university": {
+        "slot_binding_acc": 1.0,
+        "slot_top3_acc": 1.0,
+        "slot_top5_acc": 1.0,
+        "answer_acc": 0.993,
+        "avg_margin": 1.4914705714434384,
+        "count": 2000.0
+      },
+      "major": {
+        "slot_binding_acc": 0.98,
+        "slot_top3_acc": 0.9995,
+        "slot_top5_acc": 1.0,
+        "answer_acc": 0.9975,
+        "avg_margin": 0.9059729772396385,
+        "count": 2000.0
+      },
+      "employer": {
+        "slot_binding_acc": 0.732,
+        "slot_top3_acc": 0.9165,
+        "slot_top5_acc": 0.9925,
+        "answer_acc": 0.995,
+        "avg_margin": 0.5008676917031407,
+        "count": 2000.0
+      },
+      "work_city": {
+        "slot_binding_acc": 0.504,
+        "slot_top3_acc": 0.5585,
+        "slot_top5_acc": 0.72,
+        "answer_acc": 0.4995,
+        "avg_margin": 0.634365828473121,
+        "count": 2000.0
+      }
+    }
+  },
+  "diagonal_accuracy": 0.9973333333313387,
+  "confusion_matrix": [
+    [
+      0.999999999998,
+      0.0,
+      0.0,
+      0.005999999999988,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.999999999998,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.999999999998,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.983999999998032,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.003999999999992,
+      0.999999999998,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.005999999999988,
+      0.0,
+      0.999999999998
+    ]
+  ],
+  "reconstruction_mse": 2.790390333071351,
+  "causal_edits": {
+    "0": {
+      "ko_avg_delta": 1.9787068452391026,
+      "ki_avg_delta": -1.6229111710563302,
+      "ko_avg_odds": 88614.03772862045,
+      "ki_avg_odds": 1747255.1198520223
+    },
+    "1": {
+      "ko_avg_delta": 2.2437381149851565,
+      "ki_avg_delta": -1.0041889248036477,
+      "ko_avg_odds": 1761472.5481367484,
+      "ki_avg_odds": 17563.675925782514
+    },
+    "2": {
+      "ko_avg_delta": 2.2717858899434002,
+      "ki_avg_delta": -3.869816119316872,
+      "ko_avg_odds": 1344496.0894413895,
+      "ki_avg_odds": 11603.683650697272
+    },
+    "3": {
+      "ko_avg_delta": 2.2169872493056326,
+      "ki_avg_delta": 0.19779195558424756,
+      "ko_avg_odds": 1731458.8031279275,
+      "ki_avg_odds": 642.0027721393236
+    },
+    "4": {
+      "ko_avg_delta": 2.265612322835948,
+      "ki_avg_delta": -1.2084108155132849,
+      "ko_avg_odds": 1739676.9901399321,
+      "ki_avg_odds": 9.577134260093253
+    },
+    "5": {
+      "ko_avg_delta": 2.2666786249964295,
+      "ki_avg_delta": -0.6306706000405068,
+      "ko_avg_odds": 1758213.465528246,
+      "ki_avg_odds": 119.1567489636696
+    }
+  },
+  "swap_controllability": {
+    "best_alpha": 10.0,
+    "best_success_rate": 1.0,
+    "alpha_comparison": {
+      "1.0": 0.16,
+      "10.0": 1.0,
+      "100.0": 0.16,
+      "1000.0": 0.16
+    },
+    "best_results": {
+      "overall_success_rate": 1.0,
+      "total_swaps_tested": 25,
+      "per_rule_success": {
+        "birth_date_to_birth_city": 1.0,
+        "birth_date_to_university": 1.0,
+        "birth_date_to_major": 1.0,
+        "birth_date_to_employer": 1.0,
+        "birth_date_to_work_city": 1.0,
+        "birth_city_to_birth_date": 1.0,
+        "birth_city_to_university": 1.0,
+        "birth_city_to_major": 1.0,
+        "birth_city_to_employer": 1.0,
+        "birth_city_to_work_city": 1.0,
+        "university_to_birth_date": 1.0,
+        "university_to_birth_city": 1.0,
+        "university_to_major": 1.0,
+        "university_to_employer": 1.0,
+        "university_to_work_city": 1.0
+      }
+    }
+  }
+}
