@@ -109,7 +109,7 @@ The `sae_training_analysis.ipynb` notebook contains comprehensive visualizations
 
 All plots handle outliers (log scales for wide ranges, 95th percentile clipping) and include grid lines for readability.
 
-## 🔬 Key Innovation: Binding Accuracy
+## 🔬 Key Innovation 1: Binding Accuracy
 
 Traditional SAE evaluation only checks reconstruction and sparsity. We introduce **binding accuracy**:
 
@@ -159,7 +159,7 @@ Relation → Answer Binding (Answer Generation):
 Diagonal Accuracy: 0.94  ✅
 ```
 
-## 🔄 Swap Controllability Analysis
+## 🔄 Key Innovation 2: Swap Controllability Analysis
 
 An advanced evaluation tests the SAE's ability to control outputs by amplifying specific features using an "alpha" parameter. This demonstrates fine-grained control over knowledge extraction.
 
@@ -262,4 +262,5 @@ If OOD accuracy ≥ 0.75, the SAE learned **semantic concepts**, not patterns!
 After running the pipeline:
 ```
 No time.
+
 ```
