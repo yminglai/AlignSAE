@@ -39,33 +39,6 @@ python scripts/04_train_sae.py             # Train SAE
 python scripts/05_evaluate_sae.py          # Evaluate binding accuracy
 ```
 
-### Detailed Command Summary
-
-1. **01_generate_dataset.py**: Generates synthetic biographical data, QA pairs, and knowledge graphs.
-   - Input: Templates from `data/templates/` and entities from `data/entities/`.
-   - Output: `data/generated/` (biographies, QA pairs, KGs).
-
-2. **02_sft_base_model.py**: Supervised fine-tuning of the base LLM on biography QA.
-   - Input: Generated QA pairs.
-   - Output: Fine-tuned model in `models/base_sft/`.
-
-3. **03_collect_activations.py**: Collects hidden state activations from the fine-tuned model.
-   - Input: Fine-tuned model, test data.
-   - Output: Activation files in `data/activations/`.
-
-4. **04_train_sae.py**: Trains the Sparse Autoencoder per layer.
-   - Input: Activations, training params (n_free=10000, epochs_stage1=20, epochs_stage2=400, lambda_ortho=1e-2).
-   - Output: Trained SAEs in `models/sae_per_layer/layer*/`.
-
-5. **05_evaluate_sae.py**: Evaluates binding accuracy, swap success, and reconstruction.
-   - Input: Trained SAEs, test data.
-   - Output: Metrics in `results/sae_per_layer/pipeline_summary.json` and detailed JSONs.
-
-### Additional Scripts
-- **add_fourth_template.py**: Adds a fourth question template for OOD testing.
-- **plot_sae_training.py**: Plots training curves (integrated into notebook).
-- **eval_memorization.py**: Checks for memorization vs. generalization.
-
 Run `launch_sae_pipeline.sh` for batch processing or `monitor_sae_training.sh` for monitoring.
 
 ## 📊 Sample Plots
@@ -264,3 +237,4 @@ After running the pipeline:
 No time.
 
 ```
+
