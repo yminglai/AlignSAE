@@ -71,3 +71,19 @@ __pycache__/
 !CHECKLIST.md
 !OOD_TEMPLATE_TEST.md
 !SUMMARY.txt
+
+# Local Python env
+.venv/
+
+# Large model checkpoints
+models/
+
+# Very large analysis results
+results/1to1_feature_coactivation_analysis/
+
+# Large analysis outputs (keep local only)
+results/1to1_feature_coactivation_analysis/
+results/traditional_sae_analysis/
+results/sae_comparison/
+results/sae_per_layer/
+results/ablation/

@@ -87,42 +87,60 @@ with open('/home/mlyang721/bio_data/results/sae_per_layer/pipeline_summary.json'
     summary = json.load(f)
 
 layer_results = summary['layer_results']
-layers_num = [int(layer) for layer in layer_results.keys()]  # Convert to int for sorting
-layers_num.sort()
+layers_num = sorted(int(layer) for layer in layer_results.keys())
 layers_str = [str(l) for l in layers_num]
-metrics = ['train_slot_acc', 'test_ood_slot_acc', 'diagonal_acc', 'swap_success', 'reconstruction_mse']
 
-# Prepare data
-data = {metric: [layer_results[str(layer)][metric] for layer in layers_num] for metric in metrics}
+# Focus on the four headline metrics (no reconstruction MSE)
+metric_specs = [
+    ('train_slot_acc', 'Train Slot Acc.', '#1f77b4'),
+    ('test_ood_slot_acc', 'Test-OOD Slot Acc.', '#ff7f0e'),
+    ('diagonal_acc', 'Diagonal Acc.', '#2ca02c'),
+    ('swap_success', 'Swap Success', '#d62728'),
+]
 
-# Plot
-fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-fig.suptitle('Final SAE Evaluation Metrics Across Layers (Outliers Handled)', fontsize=16)
-axes = axes.flatten()
+acl_rc = {
+    'font.size': 14,
+    'axes.titlesize': 18,
+    'axes.labelsize': 15,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    'legend.fontsize': 12,
+    'figure.titlesize': 22,
+    'axes.linewidth': 1.1,
+    'grid.linewidth': 0.7,
+    'grid.linestyle': '--',
+    'pdf.fonttype': 42,
+    'ps.fonttype': 42,
+}
 
-colors = ['blue', 'orange', 'green', 'red', 'purple']
+with plt.rc_context(acl_rc):
+    fig, axes = plt.subplots(1, len(metric_specs), figsize=(18, 4.8), sharex=True)
+    if len(metric_specs) == 1:
+        axes = [axes]
 
-for i, metric in enumerate(metrics):
-    ax = axes[i]
-    ax.plot(layers_num, data[metric], marker='o', color=colors[i], linewidth=2, markersize=6)
-    ax.set_title(metric)
-    ax.set_xlabel('Layer')
-    ax.set_ylabel(metric.replace('_', ' ').title())
-    ax.grid(True)
-    ax.set_xticks(layers_num)
-    ax.set_xticklabels(layers_str)
-    
-    # Handle outliers for reconstruction_mse
-    if metric == 'reconstruction_mse':
-        ax.set_yscale('log')
+    for ax, (key, title, color) in zip(axes, metric_specs):
+        values = [layer_results[str(layer)][key] for layer in layers_num]
+        ax.plot(
+            layers_num,
+            values,
+            marker='o',
+            color=color,
+            linewidth=2.5,
+            markersize=7,
+        )
+        ax.set_title(title)
+        ax.set_xlabel('Layer')
+        ax.set_ylabel('Accuracy')
+        ax.set_xticks(layers_num)
+        ax.set_xticklabels(layers_str)
+        ax.set_ylim(0.0, 1.05)
+        ax.grid(True, alpha=0.6)
 
-# Hide the last subplot if not used
-if len(metrics) < len(axes):
-    axes[-1].set_visible(False)
-
-plt.tight_layout()
-plt.savefig('final_evaluation_metrics.png', dpi=150, bbox_inches='tight')
-plt.close()
+    fig.suptitle('Final SAE Evaluation Metrics Across Layers', y=1.05)
+    fig.tight_layout()
+    fig.subplots_adjust(top=0.88)
+    fig.savefig('final_evaluation_metrics.png', dpi=400, bbox_inches='tight')
+    plt.close(fig)
 
 print("Final results plot saved.")
 
