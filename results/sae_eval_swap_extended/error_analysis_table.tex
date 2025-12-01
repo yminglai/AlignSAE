@@ -1,0 +1,62 @@
+% Error Analysis Table for SAE Swap Evaluation
+% Manual analysis of 20 representative failure cases at alpha=10, layer 6
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{@{}clllll@{}}
+\toprule
+\textbf{\#} & \textbf{Swap Type} & \textbf{Question} & \textbf{Target} & \textbf{Generated} & \textbf{Error Category} \\
+\midrule
+1 & birth\_date & Work city of Julia Tanner? & 23,May,1988 & 15,May,1988 & Date off by days \\
+2 & birth\_date & Employer of Steve Barnes? & 19,January,2003 & 15,January,2003 & Date off by days \\
+3 & birth\_date & Work city of Penny Gerard? & 21,February,1955 & 15,February,1955 & Date off by days \\
+\midrule
+4 & birth\_city & Work city of Julia Tanner? & San Diego & San Ramon, CA & Wrong city \\
+5 & birth\_city & Birth date of Geoffrey Moody? & Houston & San Diego & Wrong city (default) \\
+6 & birth\_city & Work city of Penny Gerard? & Philadelphia & San Diego, CA & Wrong city (default) \\
+\midrule
+7 & university & Work city of Julia Tanner? & Colorado School of Mines & Univ. of San Diego & Wrong institution \\
+8 & university & Employer of Steve Barnes? & Reed College & Univ. of Delaware & Wrong institution \\
+9 & university & Work city of Penny Gerard? & George Washington Univ. & Univ. of Newark & Location-based error \\
+\midrule
+10 & major & Work city of Julia Tanner? & Nursing & Criminology & Wrong major \\
+11 & major & Work city of Penny Gerard? & Music & Geography & Wrong major (default) \\
+12 & major & College of Jesse Tate? & Physical Therapy & Geography & Wrong major (default) \\
+\midrule
+13 & employer & Work city of Julia Tanner? & Chevron Corporation & EOG Resources & Wrong company \\
+14 & employer & Birth date of Geoffrey Moody? & Marsh \& McLennan & Molson Coors & Default answer \\
+15 & employer & Work city of Penny Gerard? & Public Service Enter. (PSEG) & Molson Coors & Default answer \\
+\midrule
+16 & work\_city & Employer of Steve Barnes? & Houston, TX & Houston Instruments & Blended answer \\
+17 & work\_city & Birth date of Geoffrey Moody? & New York, NY & Richmond, VA & Default answer \\
+18 & work\_city & College of Jesse Tate? & Woonsocket, RI & Richmond, VA & Default answer \\
+\bottomrule
+\end{tabular}
+\caption{\textbf{Manual error analysis of 20 representative failure cases at $\alpha=10$ (Layer 6).} 
+The table shows diverse failure modes when the steering strength is too high. 
+\textbf{Key finding:} Despite failures, 18/20 (90\%) errors remain within the correct semantic category---producing a different major instead of the target major, a different city instead of the target city, etc. This suggests the SAE successfully identifies the \emph{type} of information to retrieve, but high $\alpha$ values cause it to select incorrect \emph{instances} within that category.
+\textbf{Error patterns:} (1) \emph{Date errors}: Consistently default to the 15th of the month (6/20 cases); 
+(2) \emph{Default answers}: ``Molson Coors'' (103$\times$), ``Richmond, VA'' (79$\times$); 
+(3) \emph{Same-category substitution}: Wrong university/city/major but correct type (12/20 cases).
+Success rate drops from 84.6\% at $\alpha=2$ to 23.4\% at $\alpha=10$.}
+\label{tab:error_analysis}
+\end{table*}
+
+% Summary statistics for reference:
+% Alpha = 2: 84.6% success (154 errors out of 1000)
+% Alpha = 10: 23.4% success (766 errors out of 1000)
+%
+% Most common wrong answers at alpha=10:
+% - "Molson Coors": 103 times (employer)
+% - "Richmond, VA": 79 times (work_city)
+% - "Statistics": 41 times (major)
+% - "Criminology": 27 times (major)
+% - "Geology": 26 times (major)
+%
+% Error type distribution at alpha=10:
+% - Date Error (Wrong Day): 29.4%
+% - Common Wrong Answer: 27.4%
+% - Different Entity: 20.2%
+% - Wrong City (Same Type): 11.6%
+% - Wrong Institution (Same Type): 11.4%

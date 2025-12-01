@@ -116,15 +116,12 @@ def main():
     if all_pass:
         print("✅ All tests passed! Ready to run pipeline.")
         print("\nNext steps:")
-        print("  1. Review PIPELINE_README.md for details")
-        print("  2. Run: python run_pipeline.py")
-        print("     or start with: python scripts/01_generate_dataset.py")
+        print("  python scripts/01_generate_dataset.py")
     else:
         print("❌ Some tests failed. Please fix the issues above.")
         print("\nCommon fixes:")
         print("  - Install dependencies: pip install -r requirements.txt")
         print("  - Check that data/qa_templates/ has all 6 question files")
-        print("  - Each template file should have at least 3 question templates")
     print("="*60)
 
 if __name__ == "__main__":

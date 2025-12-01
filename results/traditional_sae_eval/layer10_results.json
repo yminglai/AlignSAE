@@ -1,0 +1,100 @@
+{
+  "layer": 10,
+  "sae_test_id": {
+    "answer_acc": 0.9953333333333333,
+    "total": 3000,
+    "per_rule": {
+      "birth_date": {
+        "answer_acc": 0.998,
+        "count": 500.0
+      },
+      "birth_city": {
+        "answer_acc": 1.0,
+        "count": 500.0
+      },
+      "university": {
+        "answer_acc": 0.976,
+        "count": 500.0
+      },
+      "major": {
+        "answer_acc": 1.0,
+        "count": 500.0
+      },
+      "employer": {
+        "answer_acc": 0.998,
+        "count": 500.0
+      },
+      "work_city": {
+        "answer_acc": 1.0,
+        "count": 500.0
+      }
+    }
+  },
+  "sae_test_ood": {
+    "answer_acc": 0.7265833333333334,
+    "total": 12000,
+    "per_rule": {
+      "birth_date": {
+        "answer_acc": 0.6875,
+        "count": 2000.0
+      },
+      "birth_city": {
+        "answer_acc": 0.7175,
+        "count": 2000.0
+      },
+      "university": {
+        "answer_acc": 0.977,
+        "count": 2000.0
+      },
+      "major": {
+        "answer_acc": 1.0,
+        "count": 2000.0
+      },
+      "employer": {
+        "answer_acc": 0.9025,
+        "count": 2000.0
+      },
+      "work_city": {
+        "answer_acc": 0.075,
+        "count": 2000.0
+      }
+    }
+  },
+  "reconstruction_mse": 0.019753530593588947,
+  "diagonal_acc": 0.4586092817046305,
+  "avg_purity": 0.42366666666666664,
+  "best_matching": {
+    "birth_city": {
+      "feature_idx": 53,
+      "selectivity": 0.8347131500702842
+    },
+    "major": {
+      "feature_idx": 2764,
+      "selectivity": 0.5595779537834948
+    },
+    "university": {
+      "feature_idx": 2430,
+      "selectivity": 0.0681963987475538
+    },
+    "birth_date": {
+      "feature_idx": 3882,
+      "selectivity": 0.7832502448449499
+    },
+    "work_city": {
+      "feature_idx": 9909,
+      "selectivity": 0.23684801276967388
+    },
+    "employer": {
+      "feature_idx": 6050,
+      "selectivity": 0.26906993001182605
+    }
+  },
+  "purity_per_relation": {
+    "birth_date": 0.976,
+    "birth_city": 1.0,
+    "university": 0.0,
+    "major": 0.566,
+    "employer": 0.0,
+    "work_city": 0.0
+  }
+}

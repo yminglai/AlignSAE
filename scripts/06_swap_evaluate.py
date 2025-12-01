@@ -148,7 +148,8 @@ def swap_controllability_only(sae, lm_model, tokenizer, qa_file, kg_file, layer_
 
                 # baseline generation (generate full sequence)
                 baseline_gen = lm_model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False,
-                                                 pad_token_id=tokenizer.eos_token_id)
+                                                 pad_token_id=tokenizer.eos_token_id,
+                                                 eos_token_id=tokenizer.eos_token_id)
                 baseline_text = tokenizer.decode(baseline_gen[0][inputs['input_ids'].shape[1]:], skip_special_tokens=True)
                 if '<end_of_text>' in baseline_text:
                     baseline_text = baseline_text.split('<end_of_text>')[0]
@@ -183,11 +184,17 @@ def swap_controllability_only(sae, lm_model, tokenizer, qa_file, kg_file, layer_
                     intervened_inputs['inputs_embeds'] = lm_model.get_input_embeddings()(inputs['input_ids'])
                     intervened_inputs['inputs_embeds'][0, last_pos, :] = h_swapped[0]
                     intervened_inputs.pop('input_ids', None)
+                    # Keep attention_mask for inputs_embeds
+                    if 'attention_mask' not in intervened_inputs:
+                        intervened_inputs['attention_mask'] = torch.ones_like(inputs['input_ids'])
 
                     # generate with intervened activations
+                    prompt_len = intervened_inputs['inputs_embeds'].shape[1]
                     out = lm_model.generate(**intervened_inputs, max_new_tokens=max_new_tokens, do_sample=False,
-                                            pad_token_id=tokenizer.eos_token_id)
-                    gen_text = tokenizer.decode(out[0][-max_new_tokens:], skip_special_tokens=True)
+                                            pad_token_id=tokenizer.eos_token_id,
+                                            eos_token_id=tokenizer.eos_token_id)
+                    # Decode only the newly generated tokens (after the prompt)
+                    gen_text = tokenizer.decode(out[0][prompt_len:], skip_special_tokens=True)
                     if '<end_of_text>' in gen_text:
                         gen_text = gen_text.split('<end_of_text>')[0]
                     gen_text = gen_text.strip().split('\n')[0]

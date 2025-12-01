@@ -2,6 +2,11 @@
 models/
 !models/base_sft/README.md
 
+plots/
+notebooks/
+
+# Shell scripts (local workflow only)
+*.sh
 
 # Ignore all generated dataset outputs (reproducible via db_gen.py)
 data/output.csv
@@ -66,11 +71,6 @@ __pycache__/
 
 # Allow README and documentation
 !README.md
-!PIPELINE_README.md
-!BINDING_ACCURACY.md
-!CHECKLIST.md
-!OOD_TEMPLATE_TEST.md
-!SUMMARY.txt
 
 # Local Python env
 .venv/

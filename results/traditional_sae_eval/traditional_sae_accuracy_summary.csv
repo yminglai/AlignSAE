@@ -1,0 +1,2 @@
+layer,id_answer_acc,ood_answer_acc,diagonal_acc,avg_purity,reconstruction_mse,id_birth_date_acc,ood_birth_date_acc,purity_birth_date,id_birth_city_acc,ood_birth_city_acc,purity_birth_city,id_university_acc,ood_university_acc,purity_university,id_major_acc,ood_major_acc,purity_major,id_employer_acc,ood_employer_acc,purity_employer,id_work_city_acc,ood_work_city_acc,purity_work_city
+11,1.0,0.7158333333333333,0.36875388063961695,0.44366666666666665,1.9665819410979748,1.0,0.6705,0.988,1.0,0.598,0.82,1.0,1.0,0.0,1.0,1.0,0.0,1.0,0.906,0.0,1.0,0.1205,0.854

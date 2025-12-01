@@ -1,0 +1,118 @@
+{
+  "layer11": {
+    "layer": 11,
+    "test_id": {
+      "answer_acc": 1.0,
+      "per_rule": {
+        "birth_date": {
+          "answer_acc": 1.0,
+          "count": 500.0
+        },
+        "birth_city": {
+          "answer_acc": 1.0,
+          "count": 500.0
+        },
+        "university": {
+          "answer_acc": 1.0,
+          "count": 500.0
+        },
+        "major": {
+          "answer_acc": 1.0,
+          "count": 500.0
+        },
+        "employer": {
+          "answer_acc": 1.0,
+          "count": 500.0
+        },
+        "work_city": {
+          "answer_acc": 1.0,
+          "count": 500.0
+        }
+      }
+    },
+    "test_ood": {
+      "answer_acc": 0.7158333333333333,
+      "per_rule": {
+        "birth_date": {
+          "answer_acc": 0.6705,
+          "count": 2000.0
+        },
+        "birth_city": {
+          "answer_acc": 0.598,
+          "count": 2000.0
+        },
+        "university": {
+          "answer_acc": 1.0,
+          "count": 2000.0
+        },
+        "major": {
+          "answer_acc": 1.0,
+          "count": 2000.0
+        },
+        "employer": {
+          "answer_acc": 0.906,
+          "count": 2000.0
+        },
+        "work_city": {
+          "answer_acc": 0.1205,
+          "count": 2000.0
+        }
+      }
+    },
+    "reconstruction_mse": 1.9665819410979748,
+    "diagonal_acc": 0.36875388063961695,
+    "avg_purity": 0.44366666666666665,
+    "best_matching": {
+      "birth_city": {
+        "feature_idx": 3546,
+        "feature_rank": 0,
+        "selectivity": 0.5430946083684909,
+        "avg_activation": 6.217422962188721,
+        "count": 500
+      },
+      "work_city": {
+        "feature_idx": 1779,
+        "feature_rank": 1,
+        "selectivity": 0.5863951369169258,
+        "avg_activation": 5.29251766204834,
+        "count": 500
+      },
+      "major": {
+        "feature_idx": 270,
+        "feature_rank": 2,
+        "selectivity": 0.14683729876391635,
+        "avg_activation": 1.3447227478027344,
+        "count": 353
+      },
+      "birth_date": {
+        "feature_idx": 1748,
+        "feature_rank": 3,
+        "selectivity": 0.6926608244604793,
+        "avg_activation": 6.381983280181885,
+        "count": 500
+      },
+      "employer": {
+        "feature_idx": 5770,
+        "feature_rank": 4,
+        "selectivity": 0.10158520150966464,
+        "avg_activation": 0.922565758228302,
+        "count": 275
+      },
+      "university": {
+        "feature_idx": 1537,
+        "feature_rank": 5,
+        "selectivity": 0.14195021381822487,
+        "avg_activation": 1.292452096939087,
+        "count": 372
+      }
+    },
+    "purity_per_relation": {
+      "birth_date": 0.988,
+      "birth_city": 0.82,
+      "university": 0.0,
+      "major": 0.0,
+      "employer": 0.0,
+      "work_city": 0.854
+    }
+  }
+}
