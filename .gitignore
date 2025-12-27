@@ -1,12 +1,66 @@
-# Ignore model checkpoints and outputs
-models/
-!models/base_sft/README.md
+# Ignore model checkpoints and outputs (now under 1hop/)
+1hop/models/
+!1hop/models/base_sft/README.md
 
-plots/
 notebooks/
 
-# Shell scripts (local workflow only)
+# Two-hop checkpoints & artifacts
+2hop/_trained_model_*/
+2hop/sae_*/
+2hop/sae_per_epoch/
+2hop/activations/
+2hop/grokking_activations/
+2hop/grokking_analysis*/
+2hop/swap_results/
+2hop/epoch_evolution_analysis/
+2hop/binding_evolution_plots/
+2hop/sae_large*/
+2hop/sae_per_layer*/
+2hop/*.pt
+2hop/*.pkl
+2hop/plots/
+2hop/plot_*.py
+2hop/visualize_traditional_sae.py
+2hop/stitch_binding_plots.py
+2hop/find_relation_features_and_swap.py
+2hop/find_relation_features_2hop_and_swap.py
+2hop/train_unsupervised_sae.py
+2hop/epoch_evolution_analysis/
+2hop/epoch_evolution_analysis/**
+
+1hop/plots/
+1hop/plot.py
+1hop/plots/*.py
+1hop/plots/**/*.py
+1hop/scripts/plot_*.py
+1hop/scripts/generate_plots.py
+1hop/figures/
+1hop/logs/
+1hop/results/
+1hop/data/output.csv
+1hop/data/bio.txt
+1hop/data/qa.txt
+1hop/data/generated/
+1hop/data/activations/
+1hop/data/preview/
+1hop/data/qa_templates/
+1hop/data/templates/
+1hop/data/entities/
+1hop/data/README.md
+1hop/data/db_gen.py
+
+# Shell scripts (keep pipeline entrypoints tracked)
 *.sh
+!scripts/*.sh
+!2hop/*.sh
+!run_*.sh
+
+# 2hop: ignore auxiliary shell scripts, keep main entrypoints
+2hop/*.sh
+!2hop/run_full_pipeline.sh
+!2hop/run_train_two_hop.sh
+!2hop/run_swap_layer6.sh
+!2hop/run_grokking_analysis.sh
 
 # Ignore all generated dataset outputs (reproducible via db_gen.py)
 data/output.csv
@@ -18,31 +72,36 @@ data/activations/
 # Ignore preview and statistics
 data/preview/
 
-# Track all raw data, templates, and scripts for reproducibility
-!data/README.md
-!data/db_gen.py
-!data/entities/
-!data/entities/birth_cities.txt
-!data/entities/companies.csv
-!data/entities/first_names.txt
-!data/entities/last_names.txt
-!data/entities/major_names.txt
-!data/entities/middle_names.txt
-!data/entities/universities.txt
-!data/qa_templates/
-!data/qa_templates/birth_city_questions.txt
-!data/qa_templates/birth_date_questions.txt
-!data/qa_templates/company_city_questions.txt
-!data/qa_templates/employer_questions.txt
-!data/qa_templates/major_questions.txt
-!data/qa_templates/university_questions.txt
-!data/templates/
-!data/templates/birth_city_templates.txt
-!data/templates/birth_date_templates.txt
-!data/templates/company_city_templates.txt
-!data/templates/employer_templates.txt
-!data/templates/major_templates.txt
-!data/templates/university_templates.txt
+# Track raw data/templates in 1hop (adjust paths if needed)
+!1hop/data/README.md
+!1hop/data/db_gen.py
+!1hop/data/entities/
+!1hop/data/entities/birth_cities.txt
+!1hop/data/entities/companies.csv
+!1hop/data/entities/first_names.txt
+!1hop/data/entities/last_names.txt
+!1hop/data/entities/major_names.txt
+!1hop/data/entities/middle_names.txt
+!1hop/data/entities/universities.txt
+!1hop/data/qa_templates/
+!1hop/data/qa_templates/birth_city_questions.txt
+!1hop/data/qa_templates/birth_date_questions.txt
+!1hop/data/qa_templates/company_city_questions.txt
+!1hop/data/qa_templates/employer_questions.txt
+!1hop/data/qa_templates/major_questions.txt
+!1hop/data/qa_templates/university_questions.txt
+!1hop/data/templates/
+!1hop/data/templates/birth_city_templates.txt
+!1hop/data/templates/birth_date_templates.txt
+!1hop/data/templates/company_city_templates.txt
+!1hop/data/templates/employer_templates.txt
+!1hop/data/templates/major_templates.txt
+!1hop/data/templates/university_templates.txt
+
+# Two-hop generated datasets (regenerate via _gen_data scripts)
+2hop/_dataset/_gen/
+!2hop/_dataset/README.md
+!2hop/_gen_data/
 
 ## If you add new raw data or template files, add them here with !
 
@@ -62,6 +121,12 @@ __pycache__/
 # Ignore notebook checkpoints
 .ipynb_checkpoints/
 
+# Ignore notebooks (keep out of repo)
+notebooks/
+*.ipynb
+1hop/notebooks/
+sae_training_analysis.ipynb
+
 # Ignore shell history
 *.sh~
 
@@ -80,6 +145,8 @@ models/
 
 # Very large analysis results
 results/1to1_feature_coactivation_analysis/
+results/traditional_sae_eval/
+results/traditional_sae_eval/**
 
 # Large analysis outputs (keep local only)
 results/1to1_feature_coactivation_analysis/

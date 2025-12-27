@@ -1,0 +1,4 @@
+Total unique facts: 800
+Total unique entities: 40
+
+Entities with multiple outgoing relations: 40
