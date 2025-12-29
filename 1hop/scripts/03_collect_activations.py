@@ -52,11 +52,13 @@ def collect_activations(model, tokenizer, qa_file, kg_file, layer_idx=-1, max_sa
             activations.append({
                 'h': h,
                 'rule_idx': qa['rule_idx'],
-                'rule_name': qa['rule_name'],
+                'rule_name': qa.get('rule_name'),
                 'answer': qa['answer'],
                 'answer_tokens': answer_tokens,
                 'person_id': qa['person_id'],
                 'question': qa['question'],
+                'template_idx': qa.get('template_idx'),
+                'split': qa.get('split'),
             })
     
     return activations

@@ -2,7 +2,7 @@
 1hop/models/
 !1hop/models/base_sft/README.md
 
-notebooks/
+notebooks/*
 
 # Two-hop checkpoints & artifacts
 2hop/_trained_model_*/
@@ -48,6 +48,8 @@ notebooks/
 1hop/data/entities/
 1hop/data/README.md
 1hop/data/db_gen.py
+
+1hop/scripts/*gsae*.py
 
 # Shell scripts (keep pipeline entrypoints tracked)
 *.sh

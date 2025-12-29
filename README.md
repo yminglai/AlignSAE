@@ -2,7 +2,7 @@
 
 **Idea.** Train a sparse autoencoder that dedicates one slot per concept, so features are easy to find, read, and steer. We first pretrain an SAE for reconstruction/sparsity, then post-train with a binding loss that maps each ontology concept to its own slot while leaving a free bank for everything else.
 
-![AlignSAE overview](main.png)
+![AlignSAE overview](plots/main.png)
 <br><sub>An overview of our approach. Left: An unsupervised SAE trained post hoc on frozen LLM activations optimizes only reconstruction and sparsity, so each concept tends to be spread across multiple features, making interventions unreliable. Right: Our Concept-Aligned SAE adds a supervised binding loss that maps each concept to a dedicated feature, yielding clean, isolated activations that are easy to find, interpret, and steer.</sub>
 
 **Paper (reference wording):** AlignSAE: Concept-Aligned Sparse Autoencoders — Minglai Yang, Xinyu Guo, Mihai Surdeanu, Liangming Pan.
