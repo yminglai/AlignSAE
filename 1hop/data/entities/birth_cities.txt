@@ -6,3 +6,45 @@ Phoenix
 Philadelphia
 San Antonio
 San Diego
+Dallas
+San Jose
+Austin
+Jacksonville
+Fort Worth
+Columbus
+Charlotte
+San Francisco
+Indianapolis
+Seattle
+Denver
+Washington
+Boston
+El Paso
+Nashville
+Detroit
+Oklahoma City
+Portland
+Las Vegas
+Memphis
+Louisville
+Baltimore
+Milwaukee
+Albuquerque
+Tucson
+Fresno
+Mesa
+Sacramento
+Atlanta
+Kansas City
+Colorado Springs
+Miami
+Raleigh
+Omaha
+Long Beach
+Virginia Beach
+Oakland
+Minneapolis
+Tulsa
+Arlington
+Tampa
+New Orleans
