@@ -1,4 +1,4 @@
 What is {FULL_NAME}'s birth date?
-When was {FULL_NAME} born?
 Can you tell me the birth date of {FULL_NAME}?
 On what date was {FULL_NAME} born?
+When was {FULL_NAME} born?

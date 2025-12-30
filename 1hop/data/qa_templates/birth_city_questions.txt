@@ -1,4 +1,4 @@
 What is {FULL_NAME}'s birth city?
-Where was {FULL_NAME} born?
 Can you tell me the birth city of {FULL_NAME}?
 In what city was {FULL_NAME} born?
+Where was {FULL_NAME} born?

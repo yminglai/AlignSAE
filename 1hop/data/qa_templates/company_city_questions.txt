@@ -1,4 +1,4 @@
 Where does {FULL_NAME} work?
+What city does {FULL_NAME} work in?
 What is {FULL_NAME}'s work city?
 In which city is {FULL_NAME} employed?
-What city does {FULL_NAME} work in?
