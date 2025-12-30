@@ -143,15 +143,15 @@ def main():
     print("="*80)
     print("\nLayer-wise Averages (across 6 concepts):\n")
     
-    print(f"{'Layer':<6} | {'AlignSAE EffFeat':<18} | {'AlignSAE Top1Conc':<18} | {'Trad EffFeat':<18} | {'Trad Top1Conc':<18}")
-    print("-" * 80)
-    
+    print(f"{'Layer':<6} | {'AlignSAE EffFeat':<10} | {'AlignSAE Top1C':<10} | {'Trad EffFeat':<10} | {'Trad Top1C':<10}")
+    print("-" * 60)
+
     for _, row in layer_summary.iterrows():
         print(f"{int(row['layer']):<6} | "
-              f"{row['align_eff_feat']:>17.3f} | "
-              f"{row['align_top1_conc']:>17.3f} | "
-              f"{row['trad_eff_feat']:>17.3f} | "
-              f"{row['trad_top1_conc']:>17.3f}")
+              f"{row['align_eff_feat']:>10.3f} | "
+              f"{row['align_top1_conc']:>10.3f} | "
+              f"{row['trad_eff_feat']:>10.3f} | "
+              f"{row['trad_top1_conc']:>10.3f}")
     
     print("\n" + "="*80)
     print(f"Results saved to {output_dir}")
