@@ -4,6 +4,38 @@
 
 notebooks/*
 
+# Ignore scripts not starting with 01, 02, 03
+1hop/scripts/*
+!1hop/scripts/01*
+!1hop/scripts/02*
+!1hop/scripts/03*
+
+2hop/*.py
+!2hop/01*.py
+!2hop/02*.py
+!2hop/03*.py
+
+2hop/*.sh
+!2hop/01*.sh
+!2hop/02*.sh
+!2hop/03*.sh
+
+# Keep data directories in 2hop
+!2hop/_*/
+!2hop/activations/
+!2hop/facts_database/
+!2hop/grok/
+!2hop/grokking_activations/
+!2hop/grokking_analysis/
+!2hop/sae_large/
+!2hop/sae_per_epoch/
+!2hop/swap_results/
+
+# Additional auxiliary scripts to ignore
+1hop/scripts/run_ablation.py
+2hop/run_swap_parallel.sh
+2hop/run_unsupervised_swap.sh
+
 # Two-hop checkpoints & artifacts
 2hop/_trained_model_*/
 2hop/sae_*/
@@ -19,12 +51,6 @@ notebooks/*
 2hop/*.pt
 2hop/*.pkl
 2hop/plots/
-2hop/plot_*.py
-2hop/visualize_traditional_sae.py
-2hop/stitch_binding_plots.py
-2hop/find_relation_features_and_swap.py
-2hop/find_relation_features_2hop_and_swap.py
-2hop/train_unsupervised_sae.py
 2hop/epoch_evolution_analysis/
 2hop/epoch_evolution_analysis/**
 
@@ -32,8 +58,6 @@ notebooks/*
 1hop/plot.py
 1hop/plots/*.py
 1hop/plots/**/*.py
-1hop/scripts/plot_*.py
-1hop/scripts/generate_plots.py
 1hop/figures/
 1hop/logs/
 1hop/results/
@@ -49,16 +73,10 @@ notebooks/*
 1hop/data/README.md
 1hop/data/db_gen.py
 
-1hop/scripts/*gsae*.py
-
 # Shell scripts (keep pipeline entrypoints tracked)
-*.sh
-!scripts/*.sh
-!2hop/*.sh
 !run_*.sh
 
 # 2hop: ignore auxiliary shell scripts, keep main entrypoints
-2hop/*.sh
 !2hop/run_full_pipeline.sh
 !2hop/run_train_two_hop.sh
 !2hop/run_swap_layer6.sh

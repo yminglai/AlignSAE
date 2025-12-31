@@ -135,11 +135,13 @@ def compute_loss(model, h, rule_idx, answer_tokens, stage=1, mode='joint',
 
         # 4. Independence loss (decorrelate free slots within themselves)
         z_free = z[:, :n_free]
-
-        z_centered = z_free - z_free.mean(dim=0, keepdim=True)
-        cov = (z_centered.T @ z_centered) / batch_size
-        off_diag = cov - torch.eye(n_free, device=device) * cov
-        L_indep = (off_diag ** 2).sum()
+        if lambda_indep > 0:
+            z_centered = z_free - z_free.mean(dim=0, keepdim=True)
+            cov = (z_centered.T @ z_centered) / batch_size
+            off_diag = cov - torch.eye(n_free, device=device) * cov
+            L_indep = (off_diag ** 2).sum()
+        else:
+            L_indep = 0.0
 
         # 4b. Orthogonality loss (relation slots orthogonal to free slots)
         z_rel = z[:, -n_relation:]
@@ -194,14 +196,14 @@ def compute_loss(model, h, rule_idx, answer_tokens, stage=1, mode='joint',
 
     return {
         'loss': total_loss,
-        'L_recon': L_recon.item(),
-        'L_sparse': L_sparse.item() if stage >= 2 else 0.0,
-        'L_align': L_align.item() if stage >= 2 else 0.0,
-        'L_indep': L_indep.item() if stage >= 2 else 0.0,
-        'L_ortho': L_ortho.item() if stage >= 2 else 0.0,
-        'L_value': L_value.item() if stage >= 2 and mode in ['joint', 'separate_value'] else 0.0,
-        'slot_acc': slot_acc.item() if stage >= 2 else 0.0,
-        'value_acc': value_acc.item() if stage >= 2 and mode in ['joint', 'separate_value'] else 0.0,
+        'L_recon': float(L_recon),
+        'L_sparse': float(L_sparse) if stage >= 2 else 0.0,
+        'L_align': float(L_align) if stage >= 2 else 0.0,
+        'L_indep': float(L_indep) if stage >= 2 else 0.0,
+        'L_ortho': float(L_ortho) if stage >= 2 else 0.0,
+        'L_value': float(L_value) if stage >= 2 and mode in ['joint', 'separate_value'] else 0.0,
+        'slot_acc': float(slot_acc) if stage >= 2 else 0.0,
+        'value_acc': float(value_acc) if stage >= 2 and mode in ['joint', 'separate_value'] else 0.0,
     }
 
 def collate_fn(batch):
@@ -311,11 +313,11 @@ def main():
 
                 # Accumulate metrics
                 for key in epoch_metrics:
-                    epoch_metrics[key] += metrics[key] if key != 'loss' else metrics['loss'].item()
+                    epoch_metrics[key] += float(metrics[key]) if key != 'loss' else float(metrics['loss'])
 
                 pbar.set_postfix({
-                    'loss': f"{metrics['loss'].item():.4f}",
-                    'L_recon': f"{metrics['L_recon']:.4f}"
+                    'loss': f"{float(metrics['loss']):.4f}",
+                    'L_recon': f"{float(metrics['L_recon']):.4f}"
                 })
 
             # Average metrics
@@ -330,7 +332,22 @@ def main():
             print(f"  Loss: {epoch_metrics['loss']:.4f}")
             print(f"  L_recon: {epoch_metrics['L_recon']:.4f}")
 
-
+    # Save after stage 1 if completed
+    if start_epoch >= args.epochs_stage1:
+        print(f"Stage 1 already completed, loading from checkpoint")
+    else:
+        stage1_checkpoint_path = output_dir / "sae_stage1.pt"
+        torch.save({
+            'epoch': args.epochs_stage1,
+            'stage': 1,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'args': vars(args),
+            'd_model': d_model,
+            'n_free': args.n_free,
+            'n_relation': 6,
+        }, stage1_checkpoint_path)
+        print(f"✓ Saved stage 1 checkpoint to {stage1_checkpoint_path}")
 
     # Stage 2: Full training
     print(f"\n=== Stage 2: Full Training ({args.epochs_stage2} epochs) ===")

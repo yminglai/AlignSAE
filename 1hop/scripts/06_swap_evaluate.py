@@ -188,16 +188,14 @@ def swap_controllability_only(sae, lm_model, tokenizer, qa_file, kg_file, layer_
                     if 'attention_mask' not in intervened_inputs:
                         intervened_inputs['attention_mask'] = torch.ones_like(inputs['input_ids'])
 
-                    # generate with intervened activations
-                    prompt_len = intervened_inputs['inputs_embeds'].shape[1]
-                    out = lm_model.generate(**intervened_inputs, max_new_tokens=max_new_tokens, do_sample=False,
-                                            pad_token_id=tokenizer.eos_token_id,
-                                            eos_token_id=tokenizer.eos_token_id)
-                    # Decode only the newly generated tokens (after the prompt)
-                    gen_text = tokenizer.decode(out[0][prompt_len:], skip_special_tokens=True)
-                    if '<end_of_text>' in gen_text:
-                        gen_text = gen_text.split('<end_of_text>')[0]
-                    gen_text = gen_text.strip().split('\n')[0]
+                    # Get next token with intervention (single token, not full generation)
+                    with torch.no_grad():
+                        intervened_outputs = lm_model(**intervened_inputs)
+                        next_token_logits = intervened_outputs.logits[0, last_pos, :]
+                        
+                        # Get the most likely next token
+                        next_token_id = torch.argmax(next_token_logits).item()
+                        gen_text = tokenizer.decode(next_token_id, skip_special_tokens=True).strip()
 
                     is_correct = compare_answers(str(target_answer), gen_text, target_rule_name)
 
