@@ -10,6 +10,19 @@ notebooks/*
 !1hop/scripts/02*
 !1hop/scripts/03*
 
+# 1hop scripts misc / analysis helpers
+1hop/scripts/README_OOD_GENERATION.md
+1hop/scripts/analyze_ablation_results.py
+1hop/scripts/compare_supervised_vs_traditional.py
+1hop/scripts/compute_concept_fragmentation.py
+1hop/scripts/evaluate_traditional_sae.py
+1hop/scripts/generate_ood_questions_api.py
+1hop/scripts/generate_swap_plot.py
+1hop/scripts/plot.py
+1hop/scripts/temp.py
+1hop/scripts/sanity_check_traditional_sae.py
+
+
 2hop/*.py
 !2hop/01*.py
 !2hop/02*.py
