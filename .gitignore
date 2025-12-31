@@ -22,7 +22,6 @@ notebooks/*
 1hop/scripts/temp.py
 1hop/scripts/sanity_check_traditional_sae.py
 
-
 2hop/*.py
 !2hop/01*.py
 !2hop/02*.py
@@ -135,6 +134,15 @@ data/preview/
 2hop/_dataset/_gen/
 !2hop/_dataset/README.md
 !2hop/_gen_data/
+
+# 2hop local runners / helpers
+2hop/run_full_pipeline.sh
+2hop/run_grokking_analysis.sh
+2hop/run_swap_layer6.sh
+2hop/run_train_two_hop.sh
+2hop/split_dataset.py
+2hop/train_two_hop.py
+2hop/validate_traditional_sae.py
 
 ## If you add new raw data or template files, add them here with !
 
