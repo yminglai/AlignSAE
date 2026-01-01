@@ -83,13 +83,7 @@ Measures one-to-one concept-slot alignment, invariant to permutations.
 If you use this code or find our work helpful, please cite:
 
 ```
-@misc{alignsae2025,
-  title={AlignSAE: Concept-Aligned Sparse Autoencoders},
-  author={Anonymous},
-  year={2025},
-  eprint={},
-  archivePrefix={arXiv},
-  primaryClass={}
-}
+[PLACEHOLDER]
 ```
+
 
