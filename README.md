@@ -82,8 +82,14 @@ Measures one-to-one concept-slot alignment, invariant to permutations.
 
 If you use this code or find our work helpful, please cite:
 
-```
-[PLACEHOLDER]
+```bibtex
+@article{yang2026alignsae,
+  title={AlignSAE: Concept-Aligned Sparse Autoencoders},
+  author={Minglai Yang and Xinyu Guo and Zhengliang Shi and Jinhe Bi and Steven Bethard and Mihai Surdeanu and Liangming Pan},
+  journal={Transactions on Machine Learning Research},
+  year={2026},
+  url={https://openreview.net/forum?id=I9UjKxW4nq}
+}
 ```
 
 
