@@ -44,7 +44,7 @@ _Turning Sparse Autoencoders from **descriptive probes** into **controllable int
 | Finding | Result |
 | --- | --- |
 | **Perfect concept binding** (layer 6) | 100% diagonal accuracy — each concept maps to exactly one slot |
-| **Reliable causal control** | 85% swap success at moderate amplification ($\alpha\approx2$) |
+| **Reliable causal control** | 85% swap success at moderate amplification (α≈2) |
 | **Multi-hop steering** | 4× higher swap success than unsupervised SAEs in 2-hop reasoning |
 | **Layer-wise emergence** | Binding rises from 24% (early layers) to 100% (layer 6); +81% swap-success gain |
 | **Mechanistic grokking** | Diffuse evidence consolidates into stable step-wise bindings as generalization emerges |
